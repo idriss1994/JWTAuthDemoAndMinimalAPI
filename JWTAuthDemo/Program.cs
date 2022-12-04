@@ -11,6 +11,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.Audience = builder.Configuration["JWT:ValidAudience"];
+    options.Authority = builder.Configuration["JWT:ValidAuthority"];
 });
 
 var app = builder.Build();
