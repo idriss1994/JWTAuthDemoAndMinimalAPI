@@ -1,18 +1,16 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JWTAuthDemo.Controllers
+namespace WebApiApp.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    // [Authorize(AuthenticationSchemes = AuthSchemes)]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = AuthSchemes)]
     public class WeatherForecastController : ControllerBase
     {
-        //private const string AuthSchemes = CookieAuthenticationDefaults.AuthenticationScheme + "," +
-        //                                   JwtBearerDefaults.AuthenticationScheme;
+        private const string AuthSchemes = CookieAuthenticationDefaults.AuthenticationScheme + "Bearer";
+                                           
         private static readonly string[] Summaries = new[]
         {
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -24,9 +22,6 @@ namespace JWTAuthDemo.Controllers
         {
             _logger = logger;
         }
-
-        [HttpGet("Index")]
-        public IActionResult Index(string message) => Content(message);
 
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
