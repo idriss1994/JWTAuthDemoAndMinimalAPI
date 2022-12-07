@@ -27,8 +27,15 @@ builder.Services.AddAuthorization(options =>
         policy.RequireAuthenticatedUser();
         policy.Requirements.Add(new BuildingEntryRequirement());
     });
+    //Use a func to fulfill a policy
+    options.AddPolicy("BadgeEntry", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+             return context.User.HasClaim(c => (c.Type == "BadgeId" || c.Type == "TemporaryBadgeId") && c.Issuer == "https:microsoftsecurity.com");
+        });
+    });
 
-  
 });
 builder.Services.AddAuthentication(options =>
 {
