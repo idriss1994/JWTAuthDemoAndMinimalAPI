@@ -11,6 +11,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IAuthorizationHandler, MinimumAgeHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, BadgeEntryHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, TemporaryStickerHandler>();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Over18", policy =>
