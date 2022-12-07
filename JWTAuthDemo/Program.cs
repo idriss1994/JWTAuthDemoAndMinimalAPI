@@ -21,6 +21,14 @@ builder.Services.AddAuthorization(options =>
         policy.RequireAuthenticatedUser();
         policy.Requirements.Add(new MinimumAgeRequirement(18));
     });
+    options.AddPolicy("BadgeId", policy =>
+    {
+        policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+        policy.RequireAuthenticatedUser();
+        policy.Requirements.Add(new BuildingEntryRequirement());
+    });
+
+  
 });
 builder.Services.AddAuthentication(options =>
 {
