@@ -8,6 +8,7 @@ namespace JWTAuthDemo.Helpers
         {
             if (context.User.HasClaim(c => c.Type == "TemporaryBadgeId" && c.Issuer == "https://microsoftsecurit"))
             {
+                // Code to check expiration date omitted for brevity.
                 context.Succeed(requirement);
             }
             return Task.CompletedTask;
