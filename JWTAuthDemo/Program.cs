@@ -1,18 +1,23 @@
 using JWTAuthDemo.Helpers;
+using JWTAuthDemo.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddDbContext<TodoContext>(options => options.UseInMemoryDatabase("TodoList"));
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IAuthorizationHandler, MinimumAgeHandler>();
 builder.Services.AddSingleton<IAuthorizationHandler, BadgeEntryHandler>();
 builder.Services.AddSingleton<IAuthorizationHandler, TemporaryStickerHandler>();
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Over18", policy =>
