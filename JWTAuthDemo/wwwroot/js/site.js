@@ -4,7 +4,7 @@ let todos = [];
 function getItems() {
     fetch(uri)
         .then(response => response.json())
-        .then(data => _displaItems(data))
+        .then(data => _displayItems(data))
         .catch(error => console.error('Unable to get items', error));
 }
 
@@ -43,6 +43,7 @@ function deleteItem(id) {
 
 function displayEditForm(id) {
     const item = todos.find(item => item.id === id);
+    console.log('Todo item found', item);
 
     document.getElementById('edit-name').value = item.name;
     document.getElementById('edit-id').value = item.id;
@@ -50,7 +51,7 @@ function displayEditForm(id) {
     document.getElementById('editForm').style.display = 'block';
 }
 
-function upadateItem() {
+function updateItem() {
     const itemId = document.getElementById('edit-id').value;
     const item = {
         id: parseInt(itemId, 10),
@@ -77,6 +78,12 @@ function closeInput() {
     document.getElementById('editForm').style.display = 'none';
 }
 
+function _displayCount(itemCount) {
+    const name = (itemCount === 1) ? 'to-do' : 'to-dos';
+
+    document.getElementById('counter').innerText = `${itemCount} ${name}`;
+}
+
 function _displayItems(data) {
     const tBody = document.getElementById('todos');
     tBody.innerHTML = '';
@@ -94,10 +101,17 @@ function _displayItems(data) {
         let editButton = button.cloneNode(false);
         editButton.innerText = 'Edit';
         editButton.setAttribute('onclick', `displayEditForm(${item.id})`);
+        editButton.style.background = 'purple';
+        editButton.style.color = 'white';
+        editButton.style.fontSize = 'bold';
 
         let deleteButton = button.cloneNode(false);
         deleteButton.innerText = 'Delete';
         deleteButton.setAttribute('onclick', `deleteItem(${item.id})`);
+        deleteButton.style.background = 'red';
+        deleteButton.style.color = 'white';
+        deleteButton.style.fontSize = 'bold';
+
 
         let tr = tBody.insertRow();
 
