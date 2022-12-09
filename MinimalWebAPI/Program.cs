@@ -25,34 +25,47 @@ app.MapDelete("/todoitems/{id}", DeleteTodoAsync);
 
 app.Run();
 
-static async Task<IResult> GetAllTodosAsync(TodoDb db) => Results.Ok(await db.Todos.ToArrayAsync());
+static async Task<IResult> GetAllTodosAsync(TodoDb db) => 
+    Results.Ok(await db.Todos
+    .Select(todoItem => new TodoDTO(todoItem))
+    .ToArrayAsync());
 
 static async Task<IResult> GetCompleteTodos(TodoDb db) =>
-    Results.Ok(await db.Todos.Where(todo => todo.IsComplete).ToArrayAsync());
+    Results.Ok(await db.Todos
+    .Where(todo => todo.IsComplete)
+    .Select(todoItem => new TodoDTO(todoItem))
+    .ToArrayAsync());
 
 static async Task<IResult> GetTodoAsync(int id, TodoDb db) =>
     await db.Todos.FindAsync(id)
     is Todo todo
-    ? Results.Ok(todo)
+    ? Results.Ok(new TodoDTO(todo))
     : Results.NotFound();
 
-static async Task<IResult> CreateTodoAsync(Todo todo, TodoDb db)
+static async Task<IResult> CreateTodoAsync(TodoDTO todoDTO, TodoDb db)
 {
+    var todo = new Todo
+    {
+        Id = todoDTO.Id,
+        Name = todoDTO.Name,
+        IsComplete = todoDTO.IsComplete
+    };
     await db.Todos.AddAsync(todo);
+
     await db.SaveChangesAsync();
 
-    return Results.Created($"/todoitems/{todo.Id}", todo);
+    return Results.Created($"/todoitems/{todo.Id}", new TodoDTO(todo));
 }
 
-static async Task<IResult> UpdateTodoAsync(int id, Todo inputTodo, TodoDb db)
+static async Task<IResult> UpdateTodoAsync(int id, TodoDTO inputTodoDTO, TodoDb db)
 {
-    if (id != inputTodo.Id) return Results.BadRequest();
+    if (id != inputTodoDTO.Id) return Results.BadRequest();
 
     Todo? todo = await db.Todos.FindAsync(id);
     if (todo == null) return Results.NotFound();
 
-    todo.Name = inputTodo.Name;
-    todo.IsComplete = inputTodo.IsComplete;
+    todo.Name = inputTodoDTO.Name;
+    todo.IsComplete = inputTodoDTO.IsComplete;
 
     await db.SaveChangesAsync();
 
@@ -65,7 +78,7 @@ static async Task<IResult> DeleteTodoAsync(int id, TodoDb db)
     {
         db.Todos.Remove(todo);
         await db.SaveChangesAsync();
-        return Results.Ok(todo);
+        return Results.Ok(new TodoDTO(todo));
     }
 
     return Results.NotFound();
